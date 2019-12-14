@@ -1,3 +1,7 @@
+import json
+
+import numpy
+import pandas
 from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -15,6 +19,9 @@ from sqlalchemy.orm import relationship
 from dao.orm.model import *
 from dao.db import PostgresDb
 from dao.credentials import *
+
+import plotly
+import plotly.graph_objects as go
 
 db = PostgresDb()
 
@@ -84,6 +91,34 @@ def new_ganre():
 
     return render_template('form_for_genre.html', form=form, form_name="New Ganre", action='i')
 
+def create_graph():
+    x=[]
+    y=[]
+    names = list(db.sqlalchemy_session.query(ormGanre.name))
+    #print(names[0][0])
+    subs = list(db.sqlalchemy_session.query(ormGanre.count_of_subscribers))
+    #df = pandas.DataFrame({'x': x, 'y': y})  # creating a sample dataframe
+    for i in range(len(names)):
+        x.append(names[i][0])
+    for i in range(len(subs)):
+        y.append(int(subs[i][0]))
+    print(x)
+    print(y)
+    data = [
+        go.Bar(
+            x=x,  # assign x as the dataframe column 'x'
+            y=y
+        )
+    ]
+
+    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return graphJSON
+
+@app.route('/gr', methods=['GET', 'POST'])
+def draw_graph():
+    bar = create_graph()
+    return render_template('graphics.html', plot=bar)
 # @app.route('/insert', methods=['GET', 'POST'])
 # def new_country():
 #     form = CountryForm()
