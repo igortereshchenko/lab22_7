@@ -1,12 +1,13 @@
+
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
-
 class ormGanre(Base):
     __tablename__ = 'orm_ganre'
-    name = Column(String(15), primary_key=True)
+    id=Column(Integer, primary_key=True)
+    name = Column(String(15))
     popularity = Column(Integer)
     count_of_subscribers = Column(Integer)
     year = Column(Integer)
@@ -14,7 +15,32 @@ class ormGanre(Base):
 
 class ormMelody(Base):
     __tablename__ = 'orm_melody'
-    melody_title = Column(String(15), primary_key=True)
+    id=Column(Integer, primary_key=True)
+    genre_id=Column(Integer, ForeignKey('orm_ganre.id'))
+    melody_title = Column(String(15))
     melody_singer = Column(String(15))
-    melody_genre = Column(String(15), ForeignKey('orm_ganre.name'))
+    melody_genre = Column(String(15))
     orm_ganre = relationship("ormGanre", back_populates="melody")
+
+# association_table = Table('association', Base.metadata,
+#     Column('ormperformer_id', String, ForeignKey('orm_performer.country')),
+#     Column('ormcountry_id', String, ForeignKey('orm_country.name'))
+# )
+#
+# class ormPerformer(Base):
+#     __tablename__ = 'orm_performer'
+#     name = Column(String(15), primary_key = True)
+#     country = Column(String(15))
+#     children = relationship("ormCountry",
+#                     secondary=association_table,
+#                             back_populates="parent")
+#
+# class ormCountry(Base):
+#     __tablename__ = 'orm_country'
+#     name = Column(String(15), primary_key = True)
+#     population = Column(Integer)
+#     goverment = Column(String(18))
+#     location = Column(String(40))
+#     parent = relationship("ormPerformer",
+#                     secondary=association_table,
+#                           back_populates="children")

@@ -4,16 +4,18 @@ from sqlalchemy.ext.declarative import declarative_base
 from dao.db import PostgresDb
 from dao import credentials
 from dao.db import *
-from dao.orm.model import ormGanre, ormMelody
+
+from forms.CountryForm import CountryForm
 from forms.GanreForm import GanreForm
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, func
 from sqlalchemy.orm import relationship
 
 from dao.orm.model import *
 from dao.db import PostgresDb
 from dao.credentials import *
+
 db = PostgresDb()
 
 app = Flask(__name__)
@@ -48,20 +50,28 @@ def insert_values():
     # session.commit()
     return ("<h1>success!</h1>")
 
-@app.route('/s', methods=['GET'])
+@app.route('/s', methods=['GET', 'POST'])
 def show_values():
     result = db.sqlalchemy_session.query(ormGanre).all()
     return render_template('ganre.html', ganres=result)
 
+
+# @app.route('/shop', methods=['GET', 'POST'])
+# def show_country():
+#     result = db.sqlalchemy_session.query(ormCountry).all()
+#     return render_template('country.html', countries=result)
+
 @app.route('/i', methods=['GET', 'POST'])
 def new_ganre():
     form = GanreForm()
-
+    db = PostgresDb()
     if request.method == 'POST':
         if not form.validate():
             return render_template('form_for_genre.html', form=form, form_name="New Ganre", action="i")
         else:
+            genre_id = list(db.sqlalchemy_session.query(func.max(ormGanre.id)))[0][0]
             ganre_obj = ormGanre(
+                id=genre_id+1,
                 name=form.genre_name.data,
                 popularity=form.genre_popularity.data,
                 count_of_subscribers=form.genre_count_of_subscribers.data,
@@ -73,6 +83,27 @@ def new_ganre():
             return redirect(url_for('show_values'))
 
     return render_template('form_for_genre.html', form=form, form_name="New Ganre", action='i')
+
+# @app.route('/insert', methods=['GET', 'POST'])
+# def new_country():
+#     form = CountryForm()
+#
+#     if request.method == 'POST':
+#         if not form.validate():
+#             return render_template('form_for_country.html', form=form, form_name="New Country", action="insert")
+#         else:
+#             country_obj = ormCountry(
+#                 name=form.country_name.data,
+#                 population=form.country_population.data,
+#                 goverment=form.country_goverment.data,
+#                 location=form.country_location.data)
+#
+#             db.sqlalchemy_session.add(country_obj)
+#             db.sqlalchemy_session.commit()
+#
+#             return redirect(url_for('show_country'))
+#
+#     return render_template('form_for_country.html', form=form, form_name="New Country", action="insert")
 
 if __name__ == '__main__':
     app.run()

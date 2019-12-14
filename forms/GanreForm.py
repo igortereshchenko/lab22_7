@@ -3,6 +3,7 @@ from wtforms import StringField,   SubmitField,  PasswordField, DateField, Hidde
 from wtforms import validators
 
 class GanreForm(FlaskForm):
+    id = HiddenField()
 
     genre_name = StringField("Ganre name: ", [
         validators.DataRequired("Please enter a ganre name."),
