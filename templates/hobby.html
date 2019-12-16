@@ -1,0 +1,27 @@
+{% extends"index.html" %}
+{% block content %}
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Ganre</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for hobby in hobbies %}
+            <tr >
+                <td> {{hobby.name}} </td>
+                <td> {{hobby.year}} </td>
+                <td> {{hobby.tags}} </td>
+                <td> {{hobby.rating }}
+                <td>{{ hobby.student_id }}</td>
+
+            </tr>
+        {% endfor %}
+            <tr>
+                <td><a href = "/form"><button type="button" class="btn btn-success" name="btn_new_student">New Ganre</button> </a></td>
+            </tr>
+        </tbody>
+    </table>
+ </div>
+{% endblock %}

@@ -22,6 +22,25 @@ class ormMelody(Base):
     melody_genre = Column(String(15))
     orm_ganre = relationship("ormGanre", back_populates="melody")
 
+class Student(Base):
+    __tablename__='p_student'
+    id = Column(Integer, primary_key=True)
+    faculty = Column(String(20))
+    group = Column(String(8))
+    name = Column(String(15))
+    surname = Column(String(15))
+    username = Column(String(32))
+    hobby = relationship("Hobby", back_populates="p_student")
+
+class Hobby(Base):
+    __tablename__='p_hobby'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(15))
+    year = Column(Integer)
+    tags = Column(String(100))
+    rating = Column(Integer)
+    student_id = Column(Integer, ForeignKey('p_student.id'))
+    p_student = relationship("Student", back_populates="hobby")
 # association_table = Table('association', Base.metadata,
 #     Column('ormperformer_id', String, ForeignKey('orm_performer.country')),
 #     Column('ormcountry_id', String, ForeignKey('orm_country.name'))

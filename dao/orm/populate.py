@@ -23,6 +23,21 @@ ccc = ormMelody(id=3,genre_id=2,melody_title = 'CCC', melody_singer = 'Mur', mel
 
 session.add_all([pop, indie, rock, aaa, haisfisch, ccc])
 session.commit()
+
+session.query(Hobby).delete()
+session.query(Student).delete()
+
+Atamanchuk = Student(id=1, faculty = 'FICT', group = 'IT-93', name = 'Lena', surname = 'Atamanchuk', username = '@lenech')
+Popova = Student(id=2, faculty = 'IASA', group = 'KA-61', name = 'Dasha', surname = 'Popova', username = '@popovaaa')
+Petukhova = Student(id=3, faculty = 'IASA', group = 'KA-63', name = 'Katya', surname = 'Petukhova', username = '@KatePetukhova')
+
+guitar = Hobby(id=1, name='guitar', year=2019, tags='a, a, a', rating=5, student_id=1)
+tennis = Hobby(id=2, name='tennis', year=2019, tags='b, b, b', rating=10, student_id=1)
+baseball = Hobby(id=3, name='baseball', year=2020, tags='c, c, c', rating=8, student_id=3)
+
+session.add_all([Atamanchuk, Popova, Petukhova, guitar, tennis, baseball])
+session.commit()
+
 # session.query(association_table).delete()
 #
 # ukr_asoc = association_table(ormperformer_id='Ukraine', ormcountry_id='Ukraine')

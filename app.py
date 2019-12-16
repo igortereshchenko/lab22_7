@@ -23,6 +23,8 @@ from dao.credentials import *
 import plotly
 import plotly.graph_objects as go
 
+from forms.HobbyForm import HobbyForm
+
 db = PostgresDb()
 
 app = Flask(__name__)
@@ -57,6 +59,15 @@ def insert_values():
     # session.commit()
     return ("<h1>success!</h1>")
 
+@app.route('/get')
+def insert_vals():
+    return ("<h1>success!</h1>")
+
+@app.route('/show', methods=['GET', 'POST'])
+def show_vals():
+    result = db.sqlalchemy_session.query(Hobby).all()
+    return render_template('hobby.html', hobbies=result)
+
 @app.route('/s', methods=['GET', 'POST'])
 def show_values():
     result = db.sqlalchemy_session.query(ormGanre).all()
@@ -67,6 +78,29 @@ def show_values():
 # def show_country():
 #     result = db.sqlalchemy_session.query(ormCountry).all()
 #     return render_template('country.html', countries=result)
+
+@app.route('/form', methods=['GET', 'POST'])
+def new_hobby():
+    form = HobbyForm()
+    db = PostgresDb()
+    if request.method == 'POST':
+        if not form.validate():
+            return render_template('form_for_hobby.html', form=form, form_name="New hobby", action="form")
+        else:
+            hobby_id = list(db.sqlalchemy_session.query(func.max(Hobby.id)))[0][0]
+            hobby_obj = Hobby(
+                id=hobby_id+1,
+                name=form.name.data,
+                year=form.year.data,
+                tags=form.tags.data,
+                rating=form.rating.data)
+
+            db.sqlalchemy_session.add(hobby_obj)
+            db.sqlalchemy_session.commit()
+
+            return redirect(url_for('show_vals'))
+
+    return render_template('form_for_hobby.html', form=form, form_name="New hobby", action='form')
 
 @app.route('/i', methods=['GET', 'POST'])
 def new_ganre():
